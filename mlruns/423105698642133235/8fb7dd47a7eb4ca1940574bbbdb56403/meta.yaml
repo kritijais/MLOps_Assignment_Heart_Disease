@@ -1,0 +1,15 @@
+artifact_uri: /Users/krjaiswa/Desktop/Personal/BITS Pilani Course/AIML Course/Semester
+  3/ML Ops/Assignments/MLOps_Heart_Disease/mlruns/423105698642133235/8fb7dd47a7eb4ca1940574bbbdb56403/artifacts
+end_time: 1764583137696
+entry_point_name: ''
+experiment_id: '423105698642133235'
+lifecycle_stage: active
+run_id: 8fb7dd47a7eb4ca1940574bbbdb56403
+run_name: initial_eda_run
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764583132017
+status: 3
+tags: []
+user_id: krjaiswa
