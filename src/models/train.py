@@ -17,7 +17,7 @@ from src.features.eda_plots import generate_and_log_eda
 # ---------------- CONFIG ----------------
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
-EXPERIMENT_NAME = "Heart_Disease_Prediction_Full_Cycle"
+EXPERIMENT_NAME = "Heart_Disease_Prediction"
 ARTIFACT_DIR = "artifacts"
 BEST_MODEL_PATH = f"{ARTIFACT_DIR}/best_model_pipeline.pkl"
 

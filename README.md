@@ -74,7 +74,50 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-#### 3. Run the API Locally
+
+#### 3. Running MLflow UI & Tracking Experiments
+
+##### 1. Start the MLflow Tracking UI
+
+From the project root directory, run:
+
+```bash
+mlflow ui --port 5000
+```
+
+* MLflow UI will be available at:
+  **[http://localhost:5000](http://localhost:5000)**
+* Keep this terminal running while training the model.
+
+> By default, MLflow stores runs locally in the `mlruns/` directory.
+
+##### 2. Train the Model and Log Experiments
+
+Open a **new terminal**, activate the virtual environment, and run:
+
+```bash
+python -m src.models.train
+```
+
+During training, MLflow logs:
+
+* Model parameters
+* Metrics (Accuracy, ROC-AUC, Precision, Recall, F1-score)
+* Artifacts (trained model pipeline `.pkl`)
+
+##### 3. View Experiments in MLflow UI
+
+1. Open a browser and go to:
+   **[http://localhost:5000](http://localhost:5000)**
+2. Select the experiment name (e.g., `Heart_Disease_Models`)
+3. Click on a run to view:
+
+   * **Metrics** plotted over time
+   * **Parameters** used for training
+   * **Artifacts** (saved model and pipeline)
+
+
+#### 4. Run the API Locally
 
 ```bash
 uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
@@ -103,7 +146,7 @@ uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
 }
 ```
 
-#### 4. Run Docker Container
+#### 5. Run Docker Container
 
 ```bash
 docker build -t heart-disease-api .
@@ -127,7 +170,7 @@ docker run -d -p 8000:8000 --name heart-api heart-disease-api
     --Accuracy.
     --ROC-AUC.
     --Precision, Recall, F1 (via cross-validation).
--Final trained artifacts are saved as model.pkl, preprocessor.pkl.
+-Final trained artifacts are saved as best_model_pipeline.pkl which includes the preprocessor.
 
 #### 3. CI & CI/CD Pipelines
 -CI Pipeline is triggered on every push.
