@@ -12,3 +12,4 @@ pytest
 pandas 
 scikit-learn 
 numpy
+prometheus-fastapi-instrumentator
