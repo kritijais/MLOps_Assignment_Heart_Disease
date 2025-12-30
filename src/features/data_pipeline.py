@@ -4,6 +4,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from ucimlrepo import fetch_ucirepo 
 
 # The UCI dataset lacks headers, so we define them.
 # The 'num' (index 13) is the target variable (0-4).
@@ -18,45 +19,56 @@ COLUMNS = [
 NUMERICAL_FEATURES = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
 
 # Features that are categorical and will be One-Hot Encoded
-CATEGORICAL_FEATURES = ['cp', 'restecg', 'slope', 'sex', 'fbs', 'exang']
+CATEGORICAL_FEATURES = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope']
 
 # Features with missing values that require imputation and encoding
 IMPUTE_ENCODE_FEATURES = ['ca', 'thal']
 
-def load_and_clean_data(url: str = None) -> pd.DataFrame:
+### Data Acquisition & Data Cleaning
+# No major missing values; verified with .isna().sum()
+# Encoded categorical features: sex, cp, thal, slope
+def load_and_clean_data(local_path: str = None) -> pd.DataFrame:
     """
     Loads the Heart Disease UCI dataset, handles missing values, and binarizes the target.
     """
-    if url is None:
-        # Default URL for the Cleveland dataset
-        #url = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/cleveland.data"
-        url = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
-        #url = "https://archive.ics.uci.edu/dataset/45/heart+disease"
+    # 1. Fetch dataset
+    if local_path and pd.io.common.file_exists(local_path):
+        df = pd.read_csv(local_path)
+    else:
+        heart_disease = fetch_ucirepo(id=45)
 
-    # 1. Data Acquisition
-    # Use '?' as the marker for missing values. 
-    # Use 'encoding' and 'delim_whitespace=True' to handle the file format quirks.
-    df = pd.read_csv(
-        url, 
-        names=COLUMNS, 
-        na_values='?',
-        #delim_whitespace=True, 
-        sep=',',              
-        encoding='iso-8859-1' 
-    )
+        # 2. Get features and target
+        X = heart_disease.data.features
+        y = heart_disease.data.targets
 
-    # 2. Target Binarization
-    # The original target is 0-4. We binarize: 0=No disease, >0=Disease present.
+        # 3. Combine into a single DataFrame
+        df = pd.concat([X, y], axis=1)
+
+        # 4. Assign column names
+        df.columns = COLUMNS
+
+    # 5. Replace '?' with NaN
+    df = df.replace('?', pd.NA)
+
+    # 6. Convert numeric columns properly
+    for col in NUMERICAL_FEATURES + ['target']:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    # 7. Target Binarization
+    # 0 = no disease, 1 = disease present
     df['heart_disease'] = (df['target'] > 0).astype(int)
     df = df.drop('target', axis=1) # Drop original target column
 
-    # 3. Type Conversion
-    # Convert features known to be categorical/ordinal to object type
+    # 8. Convert categorical features to object type
     for col in CATEGORICAL_FEATURES + IMPUTE_ENCODE_FEATURES:
         df[col] = df[col].astype('object')
 
     return df
 
+### Feature Engineering & Model Development
+# Scaling → StandardScaler for continuous features
+# One-hot encoding → Categorical features
+# Pipeline created using sklearn.pipeline.Pipeline
 def create_preprocessor() -> ColumnTransformer:
     """
     Creates and returns a scikit-learn ColumnTransformer for reproducible preprocessing.

@@ -3,6 +3,15 @@ import pandas as pd
 import numpy as np
 from src.features.data_pipeline import load_and_clean_data, create_preprocessor
 
+def test_pipeline_output_shape():
+    df = load_and_clean_data()
+    X = df.drop("heart_disease", axis=1)
+
+    preprocessor = create_preprocessor()
+    X_proc = preprocessor.fit_transform(X)
+
+    assert X_proc.shape[0] == X.shape[0]
+
 # A temporary fixture to load and clean the data once for all tests
 # The 'session' scope means it runs only once per pytest session.
 @pytest.fixture(scope="session")

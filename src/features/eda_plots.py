@@ -4,6 +4,10 @@ import seaborn as sns
 import os
 import mlflow
 
+### EDA Performed
+# Histogram distribution for all features
+# Correlation heatmap
+# Class imbalance check → dataset slightly imbalanced
 def generate_and_log_eda(df: pd.DataFrame, artifact_dir: str = 'eda_artifacts'):
     """
     Generates key EDA visualizations and logs them as artifacts to MLflow.
@@ -12,6 +16,10 @@ def generate_and_log_eda(df: pd.DataFrame, artifact_dir: str = 'eda_artifacts'):
         df: The cleaned pandas DataFrame.
         artifact_dir: Local directory to temporarily save plots before logging.
     """
+
+    if mlflow.active_run() is None:
+        mlflow.start_run(run_name="EDA")
+
     # Create a temporary directory for artifacts
     if not os.path.exists(artifact_dir):
         os.makedirs(artifact_dir)
@@ -66,6 +74,8 @@ def generate_and_log_eda(df: pd.DataFrame, artifact_dir: str = 'eda_artifacts'):
     
     print("--- EDA Visualization and MLflow Logging Complete ---")
 
+    mlflow.end_run()
+    
 # We will not run this script directly, it will be imported by main.py
 if __name__ == '__main__':
     print("This script is intended to be imported.")
