@@ -1,6 +1,7 @@
 import logging
 from fastapi import FastAPI, HTTPException
 from typing import Dict, Any
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Assuming these files are in the same directory structure (src/api)
 from .schemas import HeartDiseaseFeatures, PredictionResult
@@ -16,6 +17,9 @@ app = FastAPI(
     description="API for predicting the presence of heart disease using UCI Cleveland dataset features.",
     version="1.0.0"
 )
+
+# --- Prometheus Metrics ---
+Instrumentator().instrument(app).expose(app)
 
 # --- Endpoints ---
 
