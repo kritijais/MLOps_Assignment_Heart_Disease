@@ -7,10 +7,10 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from src.inference.model_loader import load_model
 
 # Import the input schema
-from src.api.schema import HeartDiseaseFeatures
+from src.api.schema import HeartDiseaseFeatures, PredictionResult
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # ---------------- LOAD MODEL ----------------
@@ -65,10 +65,15 @@ def predict(patient: HeartDiseaseFeatures):
         pred_prob = model.predict_proba(df)[:, 1]
         pred_class = model.predict(df)
 
-        return {
-            "prediction": int(pred_class[0]),
-            "risk_probability": float(pred_prob[0])
-        }
+        return PredictionResult(
+            prediction=int(pred_class[0]),
+            probability=float(pred_prob[0]),
+            message="High risk" if pred_class[0] == 1 else "Low risk"
+        )
+        # return {
+        #     "prediction": int(pred_class[0]),
+        #     "risk_probability": float(pred_prob[0])
+        # }
 
     except Exception as e:
         return {"detail": f"Inference error: {str(e)}"}

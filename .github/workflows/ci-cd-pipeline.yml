@@ -4,28 +4,56 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  lint-test-train:
     runs-on: ubuntu-latest
+
     steps:
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest flake8
 
-      - name: Run tests
-        run: |
-          PYTHONPATH=$PYTHONPATH:. pytest tests/
+      # 4. Lint code
+      - name: Lint code
+        run: flake8 src/ tests/
 
+      # 5. Run unit tests
+      - name: Run unit tests
+        run: pytest tests/ --maxfail=1 --disable-warnings -q
+
+      # 6. Train model
       - name: Train model
         run: |
-          PYTHONPATH=$PYTHONPATH:. python train.py  
+          python -m src.models.train
+        env:
+          MLFLOW_TRACKING_URI: file://$(pwd)/mlruns
+
+      # 7. Upload artifacts (trained model, logs, MLflow runs)
+      - name: Upload model artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: trained-model
+          path: artifacts/best_model_pipeline.pkl
+
+      - name: Upload MLflow logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: mlflow-logs
+          path: mlruns/
