@@ -14,3 +14,4 @@ scikit-learn
 numpy
 prometheus-fastapi-instrumentator
 ucimlrepo
+httpx

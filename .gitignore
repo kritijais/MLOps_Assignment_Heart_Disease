@@ -6,7 +6,10 @@ PYTHON SPECIFIC FILES
 
 Bytecode files
 
+# Ignore Python cache files
 pycache/
+__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -39,6 +42,8 @@ They are too large to store in Git and should be managed by MLflow or CI/CD.
 
 model.pkl
 preprocessor.pkl
+artifacts/
+eda_artifacts/
 
 2. MLflow Tracking Files
 
