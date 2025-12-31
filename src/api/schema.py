@@ -14,8 +14,7 @@ class HeartDiseaseFeatures(BaseModel):
     cp: int = Field(..., description="Chest pain type (1-4, mapped to categories).")
     trestbps: float = Field(
         ...,
-        description="Resting blood pressure "
-        "(in mm Hg on admission to the hospital).",
+        description="Resting blood pressure (in mm Hg on admission to the hospital).",
     )
     chol: float = Field(..., description="Serum cholestoral in mg/dl.")
     fbs: int = Field(
