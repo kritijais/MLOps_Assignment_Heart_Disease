@@ -102,9 +102,8 @@ def train_and_select_best_model():
             mlflow.sklearn.log_model(pipeline, artifact_path="model")
 
             print(
-                f"{model_name} | CV AUC: {
-                    cv_auc:.4f} | Test AUC: {
-                    test_auc:.4f}"
+                f"{model_name} | CV AUC: {cv_auc:.4f} | "
+                f"Test AUC: {test_auc:.4f}"
             )
 
             # ---- Track best model ----

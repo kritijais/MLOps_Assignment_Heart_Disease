@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # The output is a NumPy array, ready for ML model training
     print(f"Processed training data shape: {X_train_processed.shape}")
     print(
-        f"Number of resulting features after encoding: {
-            X_train_processed.shape[1]}"
+        f"Number of resulting features after encoding: "
+        f"{X_train_processed.shape[1]}"
     )
     print("--- Data Pipeline Demo Complete ---")
