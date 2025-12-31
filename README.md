@@ -3,13 +3,13 @@
 ### Project Overview
 This project is an MLOps pipeline for predicting heart disease using Machine Learning.
 The ML lifecycle includes:
--Data preprocessing & EDA.
--Model training and evaluation.
--Experiment tracking with MLflow.
--CI & CI/CD pipelines using GitHub Actions.
--Containerization using Docker.
--Deployment on Kubernetes (Minikube).
--Observability with logging and Prometheus metrics.
+* -Data preprocessing & EDA.
+* -Model training and evaluation.
+* -Experiment tracking with MLflow.
+* -CI & CI/CD pipelines using GitHub Actions.
+* -Containerization using Docker.
+* -Deployment on Kubernetes (Minikube).
+* -Observability with logging and Prometheus metrics.
 The final result is a production-ready FastAPI inference service deployed on Kubernetes.
 
 ### Project Structure
