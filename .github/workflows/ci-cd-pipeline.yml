@@ -36,11 +36,14 @@ jobs:
 
       # 5. Run unit tests
       - name: Run unit tests
-        run: pytest tests/ --maxfail=1 --disable-warnings -q
+        run: |
+          export PYTHONPATH=./src
+          pytest tests/ --maxfail=1 --disable-warnings -q
 
       # 6. Train model
       - name: Train model
         run: |
+          export PYTHONPATH=./src
           python -m src.models.train
         env:
           MLFLOW_TRACKING_URI: file://$(pwd)/mlruns
