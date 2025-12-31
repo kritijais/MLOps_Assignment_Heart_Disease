@@ -37,9 +37,7 @@ jobs:
       - name: Train model
         working-directory: ${{ github.workspace }}
         run: |
-          PYTHONPATH=$PWD python -m src.models.train
-        env:
-          MLFLOW_TRACKING_URI: file://$PWD/mlruns
+          PYTHONPATH=$PWD MLFLOW_TRACKING_URI=$PWD/mlruns python -m src.models.train
 
       # 6. Run unit tests
       - name: Run unit tests
