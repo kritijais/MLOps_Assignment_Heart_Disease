@@ -30,4 +30,4 @@ def test_predict_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert "prediction" in data
-    assert "risk_probability" in data
+    assert "probability" in data
