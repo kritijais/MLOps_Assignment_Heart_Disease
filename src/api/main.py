@@ -1,5 +1,5 @@
 import logging
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 import pandas as pd
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -10,7 +10,9 @@ from src.inference.model_loader import load_model
 from src.api.schema import HeartDiseaseFeatures, PredictionResult
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # ---------------- LOAD MODEL ----------------
@@ -23,16 +25,18 @@ except Exception as e:
 app = FastAPI(
     title="Heart Disease Risk Prediction API",
     description="Predicts heart disease risk using a pre-trained ML pipeline",
-    version="1.0"
+    version="1.0",
 )
 
 # ---------------- Prometheus Metrics ----------------
 Instrumentator().instrument(app).expose(app)
 
+
 # ---------------- HEALTH CHECK ----------------
 @app.get("/")
 def root():
     return {"status": "Heart Disease Prediction API is running"}
+
 
 # ---------------- ENDPOINT ----------------
 # Sample request - {
@@ -57,9 +61,18 @@ def predict(patient: HeartDiseaseFeatures):
         df = pd.DataFrame([patient.dict()])
 
         # Ensure categorical columns are of type 'object'
-        categorical_cols = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'ca', 'thal']
+        categorical_cols = [
+            "sex",
+            "cp",
+            "fbs",
+            "restecg",
+            "exang",
+            "slope",
+            "ca",
+            "thal",
+        ]
         for col in categorical_cols:
-            df[col] = df[col].astype('object')
+            df[col] = df[col].astype("object")
 
         # Predict
         pred_prob = model.predict_proba(df)[:, 1]
@@ -68,7 +81,7 @@ def predict(patient: HeartDiseaseFeatures):
         return PredictionResult(
             prediction=int(pred_class[0]),
             probability=float(pred_prob[0]),
-            message="High risk" if pred_class[0] == 1 else "Low risk"
+            message="High risk" if pred_class[0] == 1 else "Low risk",
         )
         # return {
         #     "prediction": int(pred_class[0]),

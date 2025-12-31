@@ -23,6 +23,7 @@ BEST_MODEL_PATH = f"{ARTIFACT_DIR}/best_model_pipeline.pkl"
 
 os.makedirs(ARTIFACT_DIR, exist_ok=True)
 
+
 # ---------------------------------------
 def train_and_select_best_model():
     mlflow.set_experiment(EXPERIMENT_NAME)
@@ -38,23 +39,17 @@ def train_and_select_best_model():
     y = df["heart_disease"]
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=TEST_SIZE,
-        random_state=RANDOM_STATE,
-        stratify=y
+        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
     )
 
     # ---- Candidate models ----
     models = {
         "LogisticRegression": LogisticRegression(
-            solver="liblinear",
-            random_state=RANDOM_STATE
+            solver="liblinear", random_state=RANDOM_STATE
         ),
         "RandomForest": RandomForestClassifier(
-            n_estimators=200,
-            random_state=RANDOM_STATE,
-            n_jobs=-1
-        )
+            n_estimators=200, random_state=RANDOM_STATE, n_jobs=-1
+        ),
     }
 
     best_auc = 0.0
@@ -67,27 +62,23 @@ def train_and_select_best_model():
         with mlflow.start_run(run_name=model_name):
 
             # ---- Reproducibility metadata ----
-            mlflow.log_params({
-                "model_name": model_name,
-                "python_version": platform.python_version(),
-                "sklearn_version": sklearn.__version__,
-                "test_size": TEST_SIZE
-            })
+            mlflow.log_params(
+                {
+                    "model_name": model_name,
+                    "python_version": platform.python_version(),
+                    "sklearn_version": sklearn.__version__,
+                    "test_size": TEST_SIZE,
+                }
+            )
 
             # ---- Build full pipeline ----
-            pipeline = Pipeline([
-                ("preprocessor", create_preprocessor()),
-                ("classifier", classifier)
-            ])
+            pipeline = Pipeline(
+                [("preprocessor", create_preprocessor()), ("classifier", classifier)]
+            )
 
             # ---- Cross-validation ----
             cv_results = cross_validate(
-                pipeline,
-                X_train,
-                y_train,
-                cv=5,
-                scoring="roc_auc",
-                n_jobs=-1
+                pipeline, X_train, y_train, cv=5, scoring="roc_auc", n_jobs=-1
             )
 
             cv_auc = cv_results["test_score"].mean()
@@ -103,18 +94,18 @@ def train_and_select_best_model():
             test_auc = roc_auc_score(y_test, y_prob)
             test_accuracy = accuracy_score(y_test, y_pred)
 
-            mlflow.log_metrics({
-                "test_roc_auc": test_auc,
-                "test_accuracy": test_accuracy
-            })
-
-            # ---- Log model to MLflow ----
-            mlflow.sklearn.log_model(
-                pipeline,
-                artifact_path="model"
+            mlflow.log_metrics(
+                {"test_roc_auc": test_auc, "test_accuracy": test_accuracy}
             )
 
-            print(f"{model_name} | CV AUC: {cv_auc:.4f} | Test AUC: {test_auc:.4f}")
+            # ---- Log model to MLflow ----
+            mlflow.sklearn.log_model(pipeline, artifact_path="model")
+
+            print(
+                f"{model_name} | CV AUC: {
+                    cv_auc:.4f} | Test AUC: {
+                    test_auc:.4f}"
+            )
 
             # ---- Track best model ----
             if test_auc > best_auc:
@@ -128,19 +119,22 @@ def train_and_select_best_model():
     joblib.dump(best_pipeline, BEST_MODEL_PATH)
 
     with mlflow.start_run(run_name="Best_Model_Registration"):
-        mlflow.log_params({
-            "selected_model": best_model_name,
-            "selection_metric": "roc_auc",
-            "best_roc_auc": best_auc
-        })
+        mlflow.log_params(
+            {
+                "selected_model": best_model_name,
+                "selection_metric": "roc_auc",
+                "best_roc_auc": best_auc,
+            }
+        )
 
         mlflow.sklearn.log_model(
             best_pipeline,
             artifact_path="model",
-            registered_model_name="HeartDiseaseClassifier"
+            registered_model_name="HeartDiseaseClassifier",
         )
 
     print(f"Best model saved to: {BEST_MODEL_PATH}")
+
 
 # ---------------------------------------
 if __name__ == "__main__":
