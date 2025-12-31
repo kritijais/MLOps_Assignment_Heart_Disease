@@ -47,13 +47,13 @@ jobs:
 
       # 7. Upload artifacts (trained model, logs, MLflow runs)
       - name: Upload model artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trained-model
           path: artifacts/best_model_pipeline.pkl
 
       - name: Upload MLflow logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mlflow-logs
           path: mlruns/
