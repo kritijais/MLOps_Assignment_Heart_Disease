@@ -33,19 +33,19 @@ jobs:
       - name: Lint code
         run: flake8 src/ tests/
 
-      # 5. Run unit tests
-      - name: Run unit tests
-        working-directory: ${{ github.workspace }}
-        run: |
-          PYTHONPATH=$PWD pytest tests/ --maxfail=1 --disable-warnings -q
-
-      # 6. Train model
+      # 5. Train model
       - name: Train model
         working-directory: ${{ github.workspace }}
         run: |
           PYTHONPATH=$PWD python -m src.models.train
         env:
           MLFLOW_TRACKING_URI: file://$PWD/mlruns
+
+      # 6. Run unit tests
+      - name: Run unit tests
+        working-directory: ${{ github.workspace }}
+        run: |
+          PYTHONPATH=$PWD pytest tests/ --maxfail=1 --disable-warnings -q
 
       # 7. Upload artifacts (trained model, logs, MLflow runs)
       - name: Upload model artifact
