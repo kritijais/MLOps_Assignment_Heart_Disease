@@ -18,8 +18,7 @@ The final result is a production-ready FastAPI inference service deployed on Kub
 MLOps_Assignment_Heart_Disease/
 │
 ├── .github/workflows/
-│   ├── ci_pipeline.yml
-│   └── ci-cd-pipeline.yml
+│   ├── ci-cd-pipeline.yml
 │
 ├── src/
 │   ├── api/
