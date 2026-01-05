@@ -4,6 +4,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+import os
 from ucimlrepo import fetch_ucirepo
 
 # The UCI dataset lacks headers, so we define them.
@@ -40,26 +41,28 @@ IMPUTE_ENCODE_FEATURES = ["ca", "thal"]
 # Data Acquisition & Data Cleaning
 # No major missing values; verified with .isna().sum()
 # Encoded categorical features: sex, cp, thal, slope
-def load_and_clean_data(local_path: str = None) -> pd.DataFrame:
+def load_and_clean_data() -> pd.DataFrame:
     """
     Loads the Heart Disease UCI dataset, handles missing values,
     and binarizes the target.
     """
-    # 1. Fetch dataset
-    if local_path and pd.io.common.file_exists(local_path):
-        df = pd.read_csv(local_path)
-    else:
-        heart_disease = fetch_ucirepo(id=45)
+    raw_data_path = "data/raw/heart_disease.csv"
+    processed_data_path = "data/processed/heart_disease_processed.csv"
 
-        # 2. Get features and target
+    # Check if processed data exists
+    if os.path.exists(processed_data_path):
+        return pd.read_csv(processed_data_path)
+
+    # Check if raw data exists, if not download it
+    if not os.path.exists(raw_data_path):
+        heart_disease = fetch_ucirepo(id=45)
         X = heart_disease.data.features
         y = heart_disease.data.targets
-
-        # 3. Combine into a single DataFrame
         df = pd.concat([X, y], axis=1)
-
-        # 4. Assign column names
         df.columns = COLUMNS
+        df.to_csv(raw_data_path, index=False)
+    else:
+        df = pd.read_csv(raw_data_path)
 
     # 5. Replace '?' with NaN
     df = df.replace("?", pd.NA)
@@ -76,6 +79,9 @@ def load_and_clean_data(local_path: str = None) -> pd.DataFrame:
     # 8. Convert categorical features to object type
     for col in CATEGORICAL_FEATURES + IMPUTE_ENCODE_FEATURES:
         df[col] = df[col].astype("object")
+
+    # Save processed data
+    df.to_csv(processed_data_path, index=False)
 
     return df
 
@@ -133,6 +139,7 @@ if __name__ == "__main__":
     # Load and clean
     data = load_and_clean_data()
     print(f"Loaded data shape: {data.shape}")
+    print(f"Data columns: {data.columns}")
     print(f"Target balance:\n{data['heart_disease'].value_counts()}")
 
     # Separate features (X) and target (y)
