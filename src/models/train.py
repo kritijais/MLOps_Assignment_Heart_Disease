@@ -9,8 +9,12 @@ from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import roc_auc_score, accuracy_score
-
+from sklearn.metrics import ( 
+                             roc_auc_score, 
+                             accuracy_score,
+                             precision_score,
+                             recall_score, f1_score
+                            )
 from src.features.data_pipeline import load_and_clean_data, create_preprocessor
 from src.features.eda_plots import generate_and_log_eda
 
@@ -93,17 +97,30 @@ def train_and_select_best_model():
 
             test_auc = roc_auc_score(y_test, y_prob)
             test_accuracy = accuracy_score(y_test, y_pred)
+            test_precision = precision_score(y_test, y_pred)
+            test_recall = recall_score(y_test, y_pred)
+            test_f1 = f1_score(y_test, y_pred)
 
             mlflow.log_metrics(
-                {"test_roc_auc": test_auc, "test_accuracy": test_accuracy}
+                {
+                    "test_roc_auc": test_auc,
+                    "test_accuracy": test_accuracy,
+                    "test_precision": test_precision,
+                    "test_recall": test_recall,
+                    "test_f1": test_f1,
+                }
             )
 
             # ---- Log model to MLflow ----
             mlflow.sklearn.log_model(pipeline, artifact_path="model")
 
             print(
-                f"{model_name} | CV AUC: {cv_auc:.4f} | "
-                f"Test AUC: {test_auc:.4f}"
+                f"{model_name} | "
+                f"CV AUC: {cv_auc:.4f} | "
+                f"Test AUC: {test_auc:.4f} | "
+                f"Acc: {test_accuracy:.4f} | "
+                f"Prec: {test_precision:.4f} | "
+                f"Recall: {test_recall:.4f}"
             )
 
             # ---- Track best model ----
