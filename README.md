@@ -1,16 +1,20 @@
 ## Heart Disease Prediction – MLOps Assignment
 
 ### Project Overview
+
+(Link to the flow explaination video: https://github.com/kritijais/MLOps_Assignment_Heart_Disease/blob/main/Group_30_MLOPS_video.mp4)
+
 This project is an MLOps pipeline for predicting heart disease using Machine Learning.
 The ML lifecycle includes:
-* Data preprocessing & EDA.
-* Model training and evaluation.
-* Experiment tracking with MLflow.
-* CI & CI/CD pipelines using GitHub Actions.
-* Containerization using Docker.
-* Deployment on Kubernetes (Minikube).
-* Observability with logging and Prometheus metrics.
-The final result is a production-ready FastAPI inference service deployed on Kubernetes.
+
+- Data preprocessing & EDA.
+- Model training and evaluation.
+- Experiment tracking with MLflow.
+- CI & CI/CD pipelines using GitHub Actions.
+- Containerization using Docker.
+- Deployment on Kubernetes (Minikube).
+- Observability with logging and Prometheus metrics.
+  The final result is a production-ready FastAPI inference service deployed on Kubernetes.
 
 ### Project Structure
 
@@ -40,10 +44,6 @@ MLOps_Assignment_Heart_Disease/
 │   ├── test_model_loader.py     # Unit tests for model loader
 │   └── test_api.py              # Unit tests for API
 │
-├── Kubernetes/
-│   ├── deployment.yaml          # K8s Deployment
-│   └── service.yaml             # K8s Service
-│
 ├── artifacts/                   # Trained model artifacts (ignored by Git)
 │   └── best_model_pipeline.pkl  # Trained model pipeline (includes preprocessor)
 ├── data/                        # Raw and processed data (ignored by Git)
@@ -53,6 +53,8 @@ MLOps_Assignment_Heart_Disease/
 ├── mlruns/                      # MLflow tracking files (ignored by Git)
 ├── venv/                        # Python virtual environment (ignored by Git)
 ├── Dockerfile
+├── Dockerfile.prometheus
+├── prometheus.yml
 ├── requirements.txt
 └── README.md
 ```
@@ -87,9 +89,9 @@ From the project root directory, run:
 mlflow ui --port 5000
 ```
 
-* MLflow UI will be available at:
+- MLflow UI will be available at:
   **[http://localhost:5000](http://localhost:5000)**
-* Keep this terminal running while training the model.
+- Keep this terminal running while training the model.
 
 > By default, MLflow stores runs locally in the `mlruns/` directory.
 
@@ -103,9 +105,9 @@ python -m src.models.train
 
 During training, MLflow logs:
 
-* Model parameters
-* Metrics (Accuracy, ROC-AUC, Precision, Recall, F1-score)
-* Artifacts (trained model pipeline `.pkl`)
+- Model parameters
+- Metrics (Accuracy, ROC-AUC, Precision, Recall, F1-score)
+- Artifacts (trained model pipeline `.pkl`)
 
 ##### 3. View Experiments in MLflow UI
 
@@ -114,9 +116,9 @@ During training, MLflow logs:
 2. Select the experiment name (e.g., `Heart_Disease_Models`)
 3. Click on a run to view:
 
-   * **Metrics** plotted over time
-   * **Parameters** used for training
-   * **Artifacts** (saved model and pipeline)
+   - **Metrics** plotted over time
+   - **Parameters** used for training
+   - **Artifacts** (saved model and pipeline)
 
 #### 4. Run the API Locally
 
@@ -124,8 +126,8 @@ During training, MLflow logs:
 uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-* **FastAPI docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **Health check:** [http://localhost:8000/](http://localhost:8000/)
+- **FastAPI docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Health check:** [http://localhost:8000/](http://localhost:8000/)
 
 **Sample Predict Request:**
 
@@ -157,41 +159,30 @@ docker run -d -p 8000:8000 --name heart-api heart-disease-api
 #### 6. Production Deployment & Validation
 
 ```bash
-kubectl config use-context docker-desktop
-kubectl get nodes
-kubectl apply -f Kubernetes/deployment.yaml
-kubectl apply -f Kubernetes/service.yaml
-kubectl get pods
-kubectl logs -f <podname>
+# Build the Docker image for the FastAPI application
+# -t assigns a name (tag) to the image
+# . indicates the current directory containing the Dockerfile
+docker build -t heart-disease-api .
+
+# List all locally available Docker images
+# Used to verify that the image was built successfully
+docker images
 ```
-* **API endpoint:** [http://localhost:8000](http://localhost:8000)
-* **Metrics endpoint:** [http://localhost:8000/metrics](http://localhost:8000/metrics)
+
+- Then Deploy on render using the public image.
+- **API endpoint:** [http://localhost:8000](http://localhost:8000)
+- **Metrics endpoint:** [http://localhost:8000/metrics](http://localhost:8000/metrics)
 
 ### EDA and Modelling Choices
 
-* Exploratory Data Analysis (EDA) was performed to understand the distribution of features and their relationship with the target variable.
-* The dataset was preprocessed using `data_pipeline.py`, which includes handling missing values, encoding categorical variables, and scaling numerical features.
-* Two models were trained: Logistic Regression and Random Forest. The best-performing model was selected based on metrics like Accuracy, ROC-AUC, Precision, Recall, and F1-score.
+- Exploratory Data Analysis (EDA) was performed to understand the distribution of features and their relationship with the target variable.
+- The dataset was preprocessed using `data_pipeline.py`, which includes handling missing values, encoding categorical variables, and scaling numerical features.
+- Two models were trained: Logistic Regression and Random Forest. The best-performing model was selected based on metrics like Accuracy, ROC-AUC, Precision, Recall, and F1-score.
 
 ### Experiment Tracking Summary
 
-* Experiment tracking was done using MLflow, which logged model parameters, metrics, and artifacts.
-* The MLflow UI provides a visual representation of the experiments, allowing for easy comparison of different runs.
-
-### Architecture Diagram
-
-![Architecture Diagram](https://example.com/architecture_diagram.png)
-
-### CI/CD and Deployment Workflow Screenshots
-
-#### CI Pipeline
-![CI Pipeline](https://example.com/ci_pipeline_screenshot.png)
-
-#### CI/CD Pipeline
-![CI/CD Pipeline](https://example.com/ci_cd_pipeline_screenshot.png)
-
-#### Kubernetes Deployment
-![Kubernetes Deployment](https://example.com/kubernetes_deployment_screenshot.png)
+- Experiment tracking was done using MLflow, which logged model parameters, metrics, and artifacts.
+- The MLflow UI provides a visual representation of the experiments, allowing for easy comparison of different runs.
 
 ### Link to Code Repository
 
@@ -200,45 +191,51 @@ kubectl logs -f <podname>
 ### MLOps Workflow
 
 #### 1. Data & Feature Engineering
-* Data loaded and cleaned by using `data_pipeline.py`.
-* Categorical and numerical features processed by using `ColumnTransformer`.
-* EDA plots are generated and logged as `eda-artifacts`.
+
+- Data loaded and cleaned by using `data_pipeline.py`.
+- Categorical and numerical features processed by using `ColumnTransformer`.
+- EDA plots are generated and logged as `eda-artifacts`.
 
 #### 2. Model Training & Experiment Tracking
-* Training for Logistic Regression and Random Forest models.
-* Metrics logged:
-    * Accuracy.
-    * ROC-AUC.
-    * Precision, Recall, F1 (via cross-validation).
-* Final trained artifacts are saved as `best_model_pipeline.pkl` which includes the preprocessor.
+
+- Training for Logistic Regression and Random Forest models.
+- Metrics logged:
+  - Accuracy.
+  - ROC-AUC.
+  - Precision, Recall, F1 (via cross-validation).
+- Final trained artifacts are saved as `best_model_pipeline.pkl` which includes the preprocessor.
 
 #### 3. CI & CI/CD Pipelines
-* CI Pipeline is triggered on every push.
-    Steps:
-    - Dependency installation
-    - Linting (Flake8)
-    - Unit tests (Pytest)
-    - Model training with MLflow logging
-* CI/CD Pipeline is triggered on push to "main", It ensures Code quality, Successful training and Deployment readiness.
+
+- CI Pipeline is triggered on every push.
+  Steps:
+  - Dependency installation
+  - Linting (Flake8)
+  - Unit tests (Pytest)
+  - Model training with MLflow logging
+- CI/CD Pipeline is triggered on push to "main", It ensures Code quality, Successful training and Deployment readiness.
 
 #### 4. Containerization (Docker)
-* FastAPI inference service packaged as a Docker image
-* Model and preprocessor included as artifacts
-* Image built using:
-    ```bash
-    docker build -t heart-disease-api:latest .
-    ```
+
+- FastAPI inference service packaged as a Docker image
+- Model and preprocessor included as artifacts
+- Image built using:
+  ```bash
+  docker build -t heart-disease-api:latest .
+  ```
 
 #### 5. Kubernetes Deployment (Minikube)
-* Deployed on a local Kubernetes cluster using Minikube
-* Resources:
-    - Deployment: Manages FastAPI pods
-    - Service (NodePort): Exposes the application
+
+- Deployed on a local Kubernetes cluster using Minikube
+- Resources:
+  - Deployment: Manages FastAPI pods
+  - Service (NodePort): Exposes the application
 
 #### 6. Accessing the Application
-* Access application on browser by starting the service using:
-     ```bash
-     minikube service heart-disease-service
-     ```
-* Access Metrics using: link/metrics
-* Access docs using: link/docs
+
+- Access application on browser by starting the service using:
+  ```bash
+  minikube service heart-disease-service
+  ```
+- Access Metrics using: link/metrics
+- Access docs using: link/docs
