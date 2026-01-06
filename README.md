@@ -170,8 +170,9 @@ docker images
 ```
 
 - Then Deploy on render using the public image.
-- **API endpoint:** [http://localhost:8000](http://localhost:8000)
-- **Metrics endpoint:** [http://localhost:8000/metrics](http://localhost:8000/metrics)
+- **API endpoint:** https://heart-disease-api-latest-ib1p.onrender.com/docs
+- **Metrics endpoint:** https://heart-disease-api-latest-ib1p.onrender.com/metrics
+- **Prometheus endpoint:** https://heart-disease-prometheus.onrender.com/targets
 
 ### EDA and Modelling Choices
 
@@ -187,6 +188,7 @@ docker images
 ### Link to Code Repository
 
 [https://github.com/kritijais/MLOps_Assignment_Heart_Disease](https://github.com/kritijais/MLOps_Assignment_Heart_Disease)
+
 
 ### MLOps Workflow
 
