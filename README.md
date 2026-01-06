@@ -154,6 +154,16 @@ docker build -t heart-disease-api .
 docker run -d -p 8000:8000 --name heart-api heart-disease-api
 ```
 
+#### 6. Production Deployment & Validation
+
+```bash
+kubectl config use-context docker-desktop
+kubectl get nodes
+kubectl apply -f Kubernetes/deployment.yaml
+kubectl apply -f Kubernetes/service.yaml
+kubectl get pods
+kubectl logs -f <podname>
+```
 * **API endpoint:** [http://localhost:8000](http://localhost:8000)
 * **Metrics endpoint:** [http://localhost:8000/metrics](http://localhost:8000/metrics)
 
