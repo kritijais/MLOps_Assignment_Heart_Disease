@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: heart-disease-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: heart-disease
   ports:
