@@ -224,18 +224,10 @@ docker images
   docker build -t heart-disease-api:latest .
   ```
 
-#### 5. Kubernetes Deployment (Minikube)
+#### 5. Production Deployment (Render)
 
-- Deployed on a local Kubernetes cluster using Minikube
-- Resources:
-  - Deployment: Manages FastAPI pods
-  - Service (NodePort): Exposes the application
+- Deployed on public server and the application will be up.
 
 #### 6. Accessing the Application
-
-- Access application on browser by starting the service using:
-  ```bash
-  minikube service heart-disease-service
-  ```
-- Access Metrics using: link/metrics
-- Access docs using: link/docs
+- Access Metrics using: https://heart-disease-api-latest-ib1p.onrender.com/metrics
+- Access docs using: https://heart-disease-api-latest-ib1p.onrender.com/docs
