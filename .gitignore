@@ -60,7 +60,8 @@ Raw or processed data should generally not be committed to Git.
 
 If you have a 'data/' directory, uncomment the line below.
 
-data/
+data/processed/heart_disease_processed.csv
+data/raw/heart_disease.csv
 
 4. Jupyter Notebook Checkpoints (if you are using notebooks)
 

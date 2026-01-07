@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - assignment
+      - main
   pull_request:
     branches:
       - assignment
+      - main
 
 jobs:
   lint-test-train:
