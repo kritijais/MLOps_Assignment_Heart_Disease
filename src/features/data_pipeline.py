@@ -49,6 +49,10 @@ def load_and_clean_data() -> pd.DataFrame:
     raw_data_path = "data/raw/heart_disease.csv"
     processed_data_path = "data/processed/heart_disease_processed.csv"
 
+    # Ensure data/raw directory exists
+    os.makedirs(os.path.dirname(raw_data_path), exist_ok=True)
+    os.makedirs(os.path.dirname(processed_data_path), exist_ok=True)
+
     # Check if processed data exists
     if os.path.exists(processed_data_path):
         return pd.read_csv(processed_data_path)
