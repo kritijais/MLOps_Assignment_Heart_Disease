@@ -55,7 +55,13 @@ def load_and_clean_data() -> pd.DataFrame:
 
     # Check if processed data exists
     if os.path.exists(processed_data_path):
-        return pd.read_csv(processed_data_path)
+        df = pd.read_csv(processed_data_path)
+
+        # Enforce categorical dtypes (CSV reload loses them)
+        for col in CATEGORICAL_FEATURES + IMPUTE_ENCODE_FEATURES:
+            df[col] = df[col].astype("object")
+
+        return df
 
     # Check if raw data exists, if not download it
     if not os.path.exists(raw_data_path):
