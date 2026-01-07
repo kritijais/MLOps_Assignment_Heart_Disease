@@ -9,8 +9,8 @@ from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import ( 
-                             roc_auc_score, 
+from sklearn.metrics import (
+                             roc_auc_score,
                              accuracy_score,
                              precision_score,
                              recall_score, f1_score
